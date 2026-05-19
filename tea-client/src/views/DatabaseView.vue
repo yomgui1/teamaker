@@ -57,7 +57,7 @@
         <p style="color: var(--danger); font-weight: 600;">
           WARNING: This will permanently delete all tea types, events, and sessions.
         </p>
-        <p>Your admin password will NOT be deleted.</p>
+        <p><strong style="color: var(--success);">Your admin password will NOT be deleted.</strong></p>
         <p>Are you absolutely sure you want to proceed?</p>
         <div class="modal-actions">
           <button class="btn btn-secondary" @click="closeDeleteModal">Cancel</button>
