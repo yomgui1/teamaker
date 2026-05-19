@@ -41,6 +41,15 @@
             {{ isBrewing ? 'Brewing in progress...' : 'No active brewing' }}
           </div>
 
+          <div v-if="selectedTeaType && !isBrewing" class="tea-info" style="text-align: center; margin: 12px 0; font-size: 0.9rem; color: var(--text-secondary);">
+            <div v-if="teaUsageCount > 0">
+              Last used: {{ teaLastUsed }}
+            </div>
+            <div v-else>
+              Never used
+            </div>
+          </div>
+
           <div v-if="!isBrewing" class="form-group" style="max-width: 300px; margin: 20px auto;">
             <label for="tea-select">Select Tea Type</label>
             <select id="tea-select" v-model="selectedTeaType">
@@ -102,6 +111,19 @@ const messageType = ref('alert-success')
 const isBrewing = computed(() => {
   if (!api.status) return false
   return api.status.status === 'on-going'
+})
+
+const teaUsageCount = computed(() => {
+  if (!selectedTeaType.value) return 0
+  return api.events.filter(e => e.tea_type === selectedTeaType.value && e.type !== 'status_update').length
+})
+
+const teaLastUsed = computed(() => {
+  if (!selectedTeaType.value) return ''
+  const teaEvents = api.events
+    .filter(e => e.tea_type === selectedTeaType.value && e.type !== 'status_update')
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  return teaEvents.length > 0 ? formatDate(teaEvents[0].created_at) : ''
 })
 
 const statusIcon = computed(() => {
