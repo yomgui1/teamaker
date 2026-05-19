@@ -31,13 +31,13 @@
     </div>
 
     <div class="card" v-if="api.statistics.length > 0">
-      <h3>Summary by Tea Type</h3>
+      <h3>🏆 Tea Rankings</h3>
       <div class="table-container">
         <table>
           <thead>
             <tr>
+              <th>#</th>
               <th>Tea Type</th>
-              <th>Total Events</th>
               <th>Started</th>
               <th>Completed</th>
               <th>Cancelled</th>
@@ -45,13 +45,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="summary in teaTypeSummary" :key="summary.name">
-              <td><strong>{{ summary.name }}</strong></td>
-              <td>{{ summary.total }}</td>
-              <td>{{ summary.started }}</td>
-              <td>{{ summary.completed }}</td>
-              <td>{{ summary.cancelled }}</td>
-              <td>{{ summary.completionRate }}%</td>
+            <tr v-for="(rank, index) in teaRankings" :key="rank.name" :class="`rank-${index + 1}`">
+              <td>{{ index + 1 }}</td>
+              <td><strong>{{ rank.name }}</strong></td>
+              <td>{{ rank.started }}</td>
+              <td>{{ rank.completed }}</td>
+              <td>{{ rank.cancelled }}</td>
+              <td>{{ rank.completionRate }}%</td>
             </tr>
           </tbody>
         </table>
@@ -94,6 +94,27 @@ const teaTypeSummary = computed(() => {
     ...s,
     completionRate: s.started > 0 ? Math.round((s.completed / s.started) * 100) : 0
   })).sort((a, b) => b.total - a.total)
+})
+
+const teaRankings = computed(() => {
+  const map = {}
+  for (const stat of api.statistics) {
+    if (!map[stat.tea_type]) {
+      map[stat.tea_type] = {
+        name: stat.tea_type,
+        started: 0,
+        completed: 0,
+        cancelled: 0
+      }
+    }
+    map[stat.tea_type].started += stat.started || 0
+    map[stat.tea_type].completed += stat.completed || 0
+    map[stat.tea_type].cancelled += stat.cancelled || 0
+  }
+  return Object.values(map).map(s => ({
+    ...s,
+    completionRate: s.started > 0 ? Math.round((s.completed / s.started) * 100) : 0
+  })).sort((a, b) => b.completionRate - a.completionRate || b.completed - a.completed)
 })
 
 function formatMonth(month) {

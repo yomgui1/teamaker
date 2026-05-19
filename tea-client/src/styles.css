@@ -538,6 +538,14 @@ th {
   text-transform: uppercase;
 }
 
+.rank-1 td:first-child::before { content: '🥇'; }
+.rank-2 td:first-child::before { content: '🥈'; }
+.rank-3 td:first-child::before { content: '🥉'; }
+
+.rank-1 td:first-child { color: #ffd700; font-size: 1.2rem; }
+.rank-2 td:first-child { color: #c0c0c0; font-size: 1.1rem; }
+.rank-3 td:first-child { color: #cd7f32; font-size: 1.05rem; }
+
 .image-upload-area {
   border: 2px dashed var(--border-color);
   border-radius: 12px;
