@@ -14,11 +14,11 @@ export const useAuthStore = defineStore('auth', {
           const res = await axios.get('/api/v1/auth/me')
           this.authenticated = res.data.authenticated
           this.role = res.data.role
-          this.initialized = true
+          this.initialized = res.data.initialized
         } catch {
           this.authenticated = false
           this.role = 'guest'
-          this.initialized = true
+          this.initialized = false
         }
       },
   async login(password, role = 'admin') {

@@ -48,6 +48,9 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const auth = useAuthStore()
+  if (!auth.initialized && to.name !== 'Login') {
+    return { name: 'Login' }
+  }
   if (to.meta.requiresAdmin && !auth.isAdmin) {
     return { name: 'Login', query: { redirect: to.fullPath } }
   }
