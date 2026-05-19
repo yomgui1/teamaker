@@ -19,10 +19,10 @@ A complete tea production management system with a Python REST backend and Vue.j
 
 ```bash
 cd tea-server
-python server.py [--port 5000] [--cors origin,origin]
+python server.py [--host 127.0.0.1] [--port 5000] [--cors origin,origin]
 ```
 
-All args support env var fallback: `TEAMAKER_PORT`, `TEAMAKER_CORS_ALLOW_ORIGIN`
+All args support env var fallback: `TEAMAKER_HOST`, `TEAMAKER_PORT`, `TEAMAKER_CORS_ALLOW_ORIGIN`
 
 ### Client (Vite dev server)
 
@@ -34,11 +34,23 @@ npm run dev
 
 Open `http://localhost:3000` in your browser.
 
+### Behind a reverse proxy (nginx)
+
+Set `VITE_API_BASE_URL` in a `.env.production` file (e.g. `VITE_API_BASE_URL=/tea`) and build:
+
+```bash
+cd tea-client
+npm run build
+```
+
+Serve the `dist/` folder via nginx, proxying `/api/` and `/image/` to the backend.
+
 ## Architecture
 
 - **Server:** `tea-server/server.py` — single-file stdlib HTTP server, `database.json` for persistence
 - **Client:** `tea-client/src/` — Vue 3 + Pinia + Vue Router + Axios
 - **Dev proxy:** Vite forwards `/api` and `/image` → `http://127.0.0.1:5000`
+- **Behind proxy:** `VITE_API_BASE_URL` env var prefixes all API/image URLs
 
 ## Security
 
