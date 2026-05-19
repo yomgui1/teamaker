@@ -6,7 +6,8 @@ export const useAuthStore = defineStore('auth', {
      authenticated: false,
      role: 'guest',
      initialized: false,
-     darkMode: false
+     darkMode: false,
+     checking: true
    }),
   actions: {
   async checkAuth() {
@@ -19,6 +20,8 @@ export const useAuthStore = defineStore('auth', {
           this.authenticated = false
           this.role = 'guest'
           this.initialized = false
+        } finally {
+          this.checking = false
         }
       },
   async login(password, role = 'admin') {

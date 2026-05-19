@@ -60,5 +60,4 @@ cd tea-client && npm install && npm run dev
 
 ## Files to Reference
 - `MEMORIES.md` — full project context, security notes, fix history
-- `ISSUES.md` — deferred security issues
 - `diaMCP-AGENTS.md` — diaMCP tool creation instructions (not repo-specific)

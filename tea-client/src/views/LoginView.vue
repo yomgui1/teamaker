@@ -76,7 +76,7 @@ const error = ref('')
 const setupPassword = ref('')
 const setupConfirm = ref('')
 
-onMounted(() => {
+onMounted(async () => {
   if (auth.authenticated) {
     const redirect = route.query.redirect || '/status'
     router.push(redirect)

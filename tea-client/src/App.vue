@@ -49,20 +49,12 @@ const currentRoute = computed(() => route.name)
 
 onMounted(async () => {
   await auth.checkAuth()
-  if (auth.authenticated && auth.isAdmin) {
-    await Promise.all([
-      api.getStatus(),
-      api.getTeaTypes(),
-      api.getEvents(),
-      api.getStatistics()
-    ])
-  } else {
-    await Promise.all([
-      api.getStatus(),
-      api.getEvents(),
-      api.getStatistics()
-    ])
-  }
+  await Promise.all([
+    api.getStatus(),
+    api.getTeaTypes(),
+    api.getEvents(),
+    api.getStatistics()
+  ])
 })
 
 async function handleLogout() {

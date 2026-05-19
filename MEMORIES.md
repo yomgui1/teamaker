@@ -34,7 +34,6 @@ test_tea/
 │           ├── EventsView.vue
 │           └── DatabaseView.vue
 ├── diaMCP-AGENTS.md
-├── ISSUES.md
 └── MEMORIES.md
 ```
 

@@ -87,6 +87,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import { useAuthStore } from '../stores/auth'
 import { useApiStore } from '../stores/api'
 import { imageUrl } from '../utils/url'
 
