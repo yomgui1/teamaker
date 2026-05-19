@@ -23,7 +23,7 @@ cd tea-client && npm install && npm run dev
 ## Security Constraints (always verify when modifying)
 - **Auth:** session-based, HttpOnly + Secure cookies, PBKDF2-HMAC-SHA256 (200k iterations)
 - **CSRF:** double-submit cookie pattern — all state-changing endpoints require `X-CSRF-Token` header
-  - Client sends it via axios interceptor (`api.js` line 4-11)
+  - Client sends it via axios interceptor (`api.js` line 8-15)
   - Server checks via `check_csrf()` — never skip this on new endpoints
 - **Rate limiting:** 100 req/60s general, 10 req/60s login + 300s cooldown
 - **Input sanitization:** `sanitize_input()` strips HTML tags, `sanitize_description()` for longer text
@@ -34,7 +34,7 @@ cd tea-client && npm install && npm run dev
 
 ## Admin Gatekeeping
 - Server-side: `require_admin()` checks session role == "admin"
-- Client-side: router guard (`router/index.js:50-60`) blocks `/tea-types`, `/events`, `/database` for non-admin
+- Client-side: router guard (`router/index.js:49-63`) blocks `/tea-types`, `/events`, `/database` for non-admin
 - **Important:** router guard is async — waits for `auth.checking = false` before evaluating, redirects unauthenticated to `/status`
 - Adding a new admin-only route requires BOTH: `meta: { requiresAdmin: true }` in router AND `require_admin()` in server
 

@@ -8,7 +8,7 @@ A complete tea production management system with:
 
 ## Directory Structure
 ```
-test_tea/
+teamaker/
 ├── tea-server/
 │   ├── server.py          # Main REST server (stdlib only)
 │   ├── database.json       # JSON database (auto-created)
@@ -69,6 +69,7 @@ test_tea/
 | POST | /api/v1/events/brewing/complete | Admin | Required | 100/60s | Complete brewing |
 | POST | /api/v1/events/brewing/cancel | Admin | Required | 100/60s | Cancel brewing |
 | GET | /api/v1/statistics | Any | - | 100/60s | Get statistics |
+| GET | /api/v1/database/export | Admin | - | 100/60s | Export database |
 | POST | /api/v1/upload-image | Admin | Required | 100/60s | Upload image |
 | GET | /image/{filename} | Any | - | 100/60s | Serve image |
 | POST | /api/v1/database/import | Admin | Required | 100/60s | Import database |
@@ -216,8 +217,6 @@ Re-scan of all server and client files after Audit #2 fixes. **3 new issues foun
 - **CLI argument parsing** (2026-05-18): Replaced manual loop with `argparse`, added `--help`, env var fallback (TEAMAKER_PORT, TEAMAKER_CORS_ALLOW_ORIGIN, TEAMAKER_LOG_METHOD, TEAMAKER_LOG_FILE), CLI overrides env vars
 
 ## Current State
-All files created. Dependencies installed (`npm install` successful).
-Server not started. MCP tool created but requires restart.
 **29 of 29 security issues fixed. 0 deferred issues.**
 **No known CVEs in any dependencies.**
 
@@ -284,3 +283,7 @@ Server not started. MCP tool created but requires restart.
 ## Login Setup Hint (2026-05-19)
 - `LoginView.vue`: added hint text "Admin password not set. Please choose a secure password (minimum 8 characters)."
 - CSS class `.setup-hint` for styling
+
+## Dead Code
+- `auth.js` `guestLogin()` — removed from client (no guest login button), but method still exists in store. Should be removed.
+- `HomeView.vue` — still exists but `/` redirects to `/status` in router. Not reachable.

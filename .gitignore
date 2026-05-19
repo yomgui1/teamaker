@@ -1,4 +1,7 @@
 node_modules/
 .env
+__pycache__/
+*.pyc
 database.json
 tea-server/image/
+tea-client/dist/
