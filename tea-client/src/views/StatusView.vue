@@ -9,7 +9,7 @@
       <div class="card">
         <h2>Tea Production Status</h2>
 
-        <div v-if="!auth.isAdmin" class="status-display">
+       <div v-if="!auth.isAdmin" class="status-display">
           <img v-if="activeTeaImage" :src="activeTeaImage" alt="Tea" class="tea-image" style="max-width: 200px; margin: 0 auto 16px; display: block;" />
           <div class="status-icon">{{ statusIcon }}</div>
           <div class="status-text">{{ statusText }}</div>
@@ -18,6 +18,76 @@
           </div>
           <div class="status-detail" v-if="api.status?.timestamp">
             Last update: {{ formatDate(api.status.timestamp) }}
+          </div>
+        </div>
+
+        <div v-else>
+          <div class="tea-image-default" @click="handleTeaClick" v-if="!selectedTeaImage && !isBrewing">
+            🍵
+          </div>
+
+          <img
+            v-else-if="selectedTeaImage"
+            :src="selectedTeaImage"
+            alt="Tea"
+            class="tea-image"
+            @click="handleTeaClick"
+          />
+
+          <h3 v-if="selectedTeaType">
+            {{ selectedTeaType }}
+          </h3>
+
+          <div class="status-text" :style="{ color: isBrewing ? 'var(--warning)' : 'var(--accent)' }">
+            {{ isBrewing ? 'Brewing in progress...' : 'No active brewing' }}
+          </div>
+
+          <div v-if="selectedTeaType && !isBrewing" class="tea-info" style="text-align: center; margin: 12px 0; font-size: 0.9rem; color: var(--text-secondary);">
+            <div v-if="teaUsageCount > 0">
+              Last used: {{ teaLastUsed }}
+            </div>
+            <div v-else>
+              Never used
+            </div>
+          </div>
+
+          <div v-if="!isBrewing" class="form-group" style="max-width: 300px; margin: 20px auto;">
+            <label for="tea-select">Select Tea Type</label>
+            <select id="tea-select" v-model="selectedTeaType">
+              <option value="" disabled>Choose a tea type</option>
+              <option v-for="tt in api.teaTypes" :key="tt.id" :value="tt.name">
+                {{ tt.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="brewing-actions">
+            <button
+              v-if="!isBrewing"
+              class="btn btn-primary"
+              :disabled="!selectedTeaType"
+              @click="handleStartBrewing"
+            >
+              🍵 Tea Brewing
+            </button>
+            <button
+              v-else
+              class="btn btn-primary"
+              @click="handleCompleteBrewing"
+            >
+              ✅ Complete Brewing
+            </button>
+            <button
+              v-if="isBrewing"
+              class="btn btn-warning"
+              @click="handleCancelBrewing"
+            >
+              ❌ Cancel Brewing
+            </button>
+          </div>
+
+          <div v-if="message" class="alert" :class="messageType" style="max-width: 400px; margin: 16px auto;">
+            {{ message }}
           </div>
         </div>
 
@@ -192,7 +262,8 @@ async function handleStartBrewing() {
 
 async function handleCompleteBrewing() {
   try {
-    await api.completeBrewing(selectedTeaType.value)
+    const teaType = isBrewing.value ? api.status.type : selectedTeaType.value
+    await api.completeBrewing(teaType)
     message.value = 'Brewing completed!'
     messageType.value = 'alert-success'
     setTimeout(() => message.value = '', 3000)
@@ -204,7 +275,8 @@ async function handleCompleteBrewing() {
 
 async function handleCancelBrewing() {
   try {
-    await api.cancelBrewing(selectedTeaType.value)
+    const teaType = isBrewing.value ? api.status.type : selectedTeaType.value
+    await api.cancelBrewing(teaType)
     message.value = 'Brewing cancelled!'
     messageType.value = 'alert-success'
     setTimeout(() => message.value = '', 3000)
