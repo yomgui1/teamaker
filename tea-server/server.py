@@ -1026,7 +1026,11 @@ class TeaHandler(BaseHTTPRequestHandler):
         if not self.check_csrf():
             return
         if self.require_admin():
-            update_db(lambda db: db.__setitem__("tea_types", []).__setitem__("events", []).__setitem__("sessions", {}))
+            def _clear_db(db):
+                db["tea_types"] = []
+                db["events"] = []
+                db["sessions"] = {}
+            update_db(_clear_db)
             self.send_json({"status": "database cleared"})
         else:
             self.send_error_json("Unauthorized", 401)
