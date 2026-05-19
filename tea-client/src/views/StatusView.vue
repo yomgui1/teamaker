@@ -10,6 +10,7 @@
         <h2>Tea Production Status</h2>
 
         <div v-if="!auth.isAdmin" class="status-display">
+          <img v-if="activeTeaImage" :src="activeTeaImage" alt="Tea" class="tea-image" style="max-width: 200px; margin: 0 auto 16px; display: block;" />
           <div class="status-icon">{{ statusIcon }}</div>
           <div class="status-text">{{ statusText }}</div>
           <div class="status-detail" v-if="api.status?.type && api.status.type !== 'unknown'">
@@ -111,6 +112,12 @@ const messageType = ref('alert-success')
 const isBrewing = computed(() => {
   if (!api.status) return false
   return api.status.status === 'on-going'
+})
+
+const activeTeaImage = computed(() => {
+  if (!api.status?.type || api.status.type === 'unknown') return ''
+  const tea = api.teaTypes.find(t => t.name === api.status.type)
+  return tea?.image ? imageUrl(tea.image) : ''
 })
 
 const teaUsageCount = computed(() => {
