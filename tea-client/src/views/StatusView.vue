@@ -115,13 +115,13 @@ const isBrewing = computed(() => {
 
 const teaUsageCount = computed(() => {
   if (!selectedTeaType.value) return 0
-  return api.events.filter(e => e.tea_type === selectedTeaType.value && e.type !== 'status_update').length
+  return api.events.filter(e => e.tea_type === selectedTeaType.value && e.type === 'brewing_completed').length
 })
 
 const teaLastUsed = computed(() => {
   if (!selectedTeaType.value) return ''
   const teaEvents = api.events
-    .filter(e => e.tea_type === selectedTeaType.value && e.type !== 'status_update')
+    .filter(e => e.tea_type === selectedTeaType.value && e.type === 'brewing_completed')
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   return teaEvents.length > 0 ? formatDate(teaEvents[0].created_at) : ''
 })
