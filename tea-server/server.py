@@ -1036,9 +1036,9 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
 
 
-def run_server(port=5000):
-    server = ThreadedHTTPServer(('0.0.0.0', port), TeaHandler)
-    print(f"Tea server running on port {port}")
+def run_server(host='127.0.0.1', port=5000):
+    server = ThreadedHTTPServer((host, port), TeaHandler)
+    print(f"Tea server running on {host}:{port}")
     print(f"CORS allow origins: {', '.join(CORS_ALLOW_ORIGINS)}")
     print(f"Logging: {LOG_METHOD}" + (f" -> {LOG_FILE}" if LOG_FILE else ""))
     server.serve_forever()
@@ -1053,11 +1053,14 @@ if __name__ == '__main__':
         epilog="""\
 env vars (overridden by CLI args):
   TEAMAKER_PORT              Server port (default: 5000)
+  TEAMAKER_HOST              Server hostname (default: 127.0.0.1)
   TEAMAKER_CORS_ALLOW_ORIGIN Comma-separated origins or '*' (default: *)
   TEAMAKER_LOG_METHOD        'stderr' or 'file' (default: stderr)
   TEAMAKER_LOG_FILE          Log file path (required if LOG_METHOD=file)
 """
     )
+    parser.add_argument('--host', type=str, default=os.environ.get('TEAMAKER_HOST', '127.0.0.1'),
+                        help='Server hostname (default: env TEAMAKER_HOST or 127.0.0.1)')
     parser.add_argument('--port', type=int, default=int(os.environ.get('TEAMAKER_PORT', '5000')),
                         help='Server port (default: env TEAMAKER_PORT or 5000)')
     parser.add_argument('--cors', type=str, default=os.environ.get('TEAMAKER_CORS_ALLOW_ORIGIN', '*'),
@@ -1075,4 +1078,4 @@ env vars (overridden by CLI args):
     globals()['LOG_FILE'] = args.log_file
     globals()['CORS_ALLOW_ORIGIN'] = args.cors
     globals()['CORS_ALLOW_ORIGINS'] = [o.strip() for o in args.cors.split(',') if o.strip()]
-    run_server(args.port)
+    run_server(args.host, args.port)
