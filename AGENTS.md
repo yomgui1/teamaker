@@ -34,8 +34,8 @@ cd tea-client && npm install && npm run dev
 
 ## Admin Gatekeeping
 - Server-side: `require_admin()` checks session role == "admin"
-- Client-side: router guard (`router/index.js:49-54`) blocks `/tea-types` and `/database` for non-admin
-- **Important:** router guard only blocks navigation — `App.vue:51-67` conditionally fetches data based on role
+- Client-side: router guard (`router/index.js:50-60`) blocks `/tea-types`, `/events`, `/database` for non-admin
+- **Important:** router guard is async — waits for `auth.checking = false` before evaluating, redirects unauthenticated to `/status`
 - Adding a new admin-only route requires BOTH: `meta: { requiresAdmin: true }` in router AND `require_admin()` in server
 
 ## Schema Versioning
@@ -53,6 +53,10 @@ cd tea-client && npm install && npm run dev
 - Login endpoint does NOT require CSRF (it sets the token)
 - All other state-changing endpoints DO require CSRF
 - `importDatabase` sends raw JSON string with `Content-Type: application/json` — not multipart/form-data
+
+## Git Rules
+- **NEVER push without explicit user permission.** SSH key expires and requires manual re-authorization on GitHub.
+- Always ask before running `git push`.
 
 ## Files to Reference
 - `MEMORIES.md` — full project context, security notes, fix history

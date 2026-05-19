@@ -262,3 +262,26 @@ Server not started. MCP tool created but requires restart.
 - Logout button only visible when `auth.isAdmin` is true (hidden in guest mode)
 - `LoginView.vue`: removed `showPasswordForm` toggle, `handleGuestLogin()`, "Guest View" and "Admin Login" buttons — only password input + "Login as Admin" button remain
 - `App.vue`: logout button condition changed from `auth.authenticated` to `auth.isAdmin`, removed unused `authenticated` computed
+
+## Behind-Proxy Deployment (2026-05-19)
+- **`--host` CLI option**: Server hostname configurable via `--host` flag or `TEAMAKER_HOST` env var (default: `127.0.0.1`)
+- **`VITE_API_BASE_URL`**: Client API/image URLs configurable via Vite env var for behind-proxy deployments (e.g. nginx)
+- `tea-client/src/utils/url.js` — new `imageUrl()` helper applies the same base URL to image URLs
+- `tea-client/src/stores/api.js` — `axios.defaults.baseURL` set from `VITE_API_BASE_URL`
+- `StatusView.vue`, `TeaTypesView.vue` — use `imageUrl()` instead of hardcoded `/image/` paths
+
+## Initialized State Fix (2026-05-19)
+- `auth.checkAuth()` was always setting `initialized = true` — now reads from API response
+- Login endpoint now returns `{"initialized": true}` in response body
+- Router guard waits for `auth.checking = false` before evaluating (prevents redirect-to-login on page reload)
+- `auth.checking` flag added to state — router `beforeEach` is now async and awaits `checkAuth()`
+- Unauthenticated users redirect to `/status` (not `/login`) — guest mode is the default
+- `App.vue` fetches data for all users (guests + admin), not just admin
+
+## Guest Pages Fix (2026-05-19)
+- `StatusView.vue` was missing `import { useAuthStore }` — caused component crash, empty page
+- Added import + `onMounted` fetches tea types for admin
+
+## Login Setup Hint (2026-05-19)
+- `LoginView.vue`: added hint text "Admin password not set. Please choose a secure password (minimum 8 characters)."
+- CSS class `.setup-hint` for styling
