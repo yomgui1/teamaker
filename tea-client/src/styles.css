@@ -367,15 +367,8 @@ input:focus, select:focus, textarea:focus {
   height: 200px;
   object-fit: cover;
   border-radius: 50%;
-  cursor: pointer;
   border: 3px solid var(--border-color);
-  transition: all 0.3s;
   margin-bottom: 20px;
-}
-
-.tea-image:hover {
-  border-color: var(--accent);
-  transform: scale(1.05);
 }
 
 .tea-image-default {

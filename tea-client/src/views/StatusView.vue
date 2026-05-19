@@ -31,7 +31,6 @@
             :src="selectedTeaImage"
             alt="Tea"
             class="tea-image"
-            @click="handleTeaClick"
           />
 
           <h3 v-if="selectedTeaType">
