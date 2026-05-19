@@ -157,6 +157,15 @@ onMounted(async () => {
   }
 })
 
+watch(selectedTeaType, (newType) => {
+  if (newType) {
+    const tea = api.teaTypes.find(t => t.name === newType)
+    selectedTeaImage.value = tea?.image ? imageUrl(tea.image) : ''
+  } else {
+    selectedTeaImage.value = ''
+  }
+})
+
 function formatDate(ts) {
   if (!ts) return ''
   try {
