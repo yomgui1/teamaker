@@ -599,7 +599,7 @@ class TeaHandler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
         self.send_header('Pragma', 'no-cache')
         self.end_headers()
-        self.wfile.write(json.dumps({"authenticated": True, "role": session_role}).encode())
+        self.wfile.write(json.dumps({"authenticated": True, "role": session_role, "initialized": True}).encode())
 
     def handle_logout(self):
         if not self.check_csrf():
