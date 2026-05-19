@@ -501,14 +501,15 @@ class TeaHandler(BaseHTTPRequestHandler):
         events = db.get("events", [])
         latest = None
         for event in reversed(events):
-            if event.get("type") in ("brewing_started", "brewing_completed"):
+            if event.get("type") in ("brewing_started", "brewing_completed", "brewing_cancelled"):
                 latest = event
                 break
 
         if latest:
+            status = "on-going" if latest.get("type") == "brewing_started" else "done"
             response = {
                 "timestamp": latest.get("created_at", ""),
-                "status": "on-going" if latest.get("type") == "brewing_started" else "done",
+                "status": status,
                 "type": latest.get("tea_type", "unknown")
             }
         else:
