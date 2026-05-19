@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+
+axios.defaults.baseURL = API_BASE
+
 axios.interceptors.request.use(config => {
   const csrf = document.cookie
     .split('; ')

@@ -86,9 +86,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useAuthStore } from '../stores/auth'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useApiStore } from '../stores/api'
+import { imageUrl } from '../utils/url'
 
 const auth = useAuthStore()
 const api = useApiStore()
@@ -143,7 +143,7 @@ async function handleTeaClick() {
   }
   if (selectedTeaType.value) {
     const tea = api.teaTypes.find(t => t.name === selectedTeaType.value)
-    selectedTeaImage.value = tea?.image ? `/image/${tea.image}` : ''
+    selectedTeaImage.value = tea?.image ? imageUrl(tea.image) : ''
   }
 }
 

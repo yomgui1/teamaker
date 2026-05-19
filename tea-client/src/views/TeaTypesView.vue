@@ -18,7 +18,7 @@
 
       <div v-else class="tea-type-grid">
         <div class="tea-type-card" v-for="tt in api.teaTypes" :key="tt.id">
-          <img v-if="tt.image" :src="`/image/${tt.image}`" :alt="tt.name" />
+          <img v-if="tt.image" :src="imageUrl(tt.image)" :alt="tt.name" />
           <div v-else class="tea-emoji">🍵</div>
           <div class="tea-type-name">{{ tt.name }}</div>
           <div class="tea-type-actions">
@@ -92,6 +92,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useApiStore } from '../stores/api'
+import { imageUrl } from '../utils/url'
 
 const api = useApiStore()
 
@@ -125,7 +126,7 @@ function openEditModal(tea) {
   form.name = tea.name
   form.image = tea.image || ''
   form.imageFile = null
-  form.imagePreview = tea.image ? `/image/${tea.image}` : ''
+  form.imagePreview = tea.image ? imageUrl(tea.image) : ''
   showModal.value = true
 }
 
