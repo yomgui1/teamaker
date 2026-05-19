@@ -38,6 +38,15 @@ const routes = [
     name: 'Database',
     component: () => import('../views/DatabaseView.vue'),
     meta: { requiresAdmin: true }
+  },
+  {
+    path: '/coffee',
+    name: 'Coffee',
+    component: () => import('../views/CoffeeView.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/status'
   }
 ]
 

@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useApiStore } from '../stores/api'
 
 const api = useApiStore()
@@ -77,6 +77,15 @@ const showMessage = ref(false)
 const message = ref('')
 const messageType = ref('alert-success')
 const showDeleteModal = ref(false)
+
+onMounted(async () => {
+  await Promise.all([
+    api.getStatus(),
+    api.getTeaTypes(),
+    api.getEvents(),
+    api.getStatistics()
+  ])
+})
 
 function showNotification(msg, type = 'alert-success') {
   message.value = msg

@@ -34,7 +34,8 @@ cd tea-client && npm install && npm run dev
 
 ## Admin Gatekeeping
 - Server-side: `require_admin()` checks session role == "admin"
-- Client-side: router guard (`router/index.js:49-63`) blocks `/tea-types`, `/events`, `/database` for non-admin
+- Client-side: router guard (`router/index.js:58-72`) blocks `/tea-types`, `/events`, `/database` for non-admin
+- Unknown routes (`/:pathMatch(.*)*`) redirect to `/status`
 - **Important:** router guard is async — waits for `auth.checking = false` before evaluating, redirects unauthenticated to `/status`
 - Adding a new admin-only route requires BOTH: `meta: { requiresAdmin: true }` in router AND `require_admin()` in server
 

@@ -284,6 +284,14 @@ Re-scan of all server and client files after Audit #2 fixes. **3 new issues foun
 - `LoginView.vue`: added hint text "Admin password not set. Please choose a secure password (minimum 8 characters)."
 - CSS class `.setup-hint` for styling
 
+## DatabaseView Auto-Refresh (2026-05-19)
+- `DatabaseView.vue` now fetches status, tea types, events, and statistics on mount via `onMounted`
+- Previously relied solely on `App.vue` `onMounted` — navigating directly to `/database` showed stale data
+
+## Router Catch-All (2026-05-19)
+- `/:pathMatch(.*)*` route redirects unknown URLs to `/status`
+- Prevents blank 404 pages for typos or direct URL entry
+
 ## Dead Code
 - `auth.js` `guestLogin()` — removed from client (no guest login button), but method still exists in store. Should be removed.
 - `HomeView.vue` — still exists but `/` redirects to `/status` in router. Not reachable.
