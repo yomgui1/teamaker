@@ -3,19 +3,22 @@
 ## Quick Start
 ```bash
 # Server (Python stdlib only, no frameworks)
-cd tea-server && python server.py [--port 5000] [--cors origin,origin] [--log file] [--log-file path]
-# All args support env var fallback: TEAMAKER_PORT, TEAMAKER_CORS_ALLOW_ORIGIN, TEAMAKER_LOG_METHOD, TEAMAKER_LOG_FILE
+cd tea-server && python server.py [--host 127.0.0.1] [--port 5000] [--cors origin,origin] [--log file] [--log-file path]
+# All args support env var fallback: TEAMAKER_HOST, TEAMAKER_PORT, TEAMAKER_CORS_ALLOW_ORIGIN, TEAMAKER_LOG_METHOD, TEAMAKER_LOG_FILE
 # CLI args override env vars. Use --help for full list.
 
 # Client (Vite dev server proxies /api and /image to server port 5000)
 cd tea-client && npm install && npm run dev
+
+# Behind a reverse proxy: set VITE_API_BASE_URL in .env.production, then npm run build
 ```
 
 ## Architecture
 - **Server:** `tea-server/server.py` — single-file stdlib HTTP server, `database.json` for persistence
 - **Client:** `tea-client/src/` — Vue 3 + Pinia + Vue Router + Axios
 - **Dev proxy:** Vite forwards `/api` and `/image` → `http://127.0.0.1:5000`
-- **CLI args:** `--port`, `--cors` (comma-separated origins or `*`), `--log stderr|file`, `--log-file`
+- **Behind proxy:** `VITE_API_BASE_URL` env var prefixes all API/image URLs
+- **CLI args:** `--host`, `--port`, `--cors` (comma-separated origins or `*`), `--log stderr|file`, `--log-file`
 
 ## Security Constraints (always verify when modifying)
 - **Auth:** session-based, HttpOnly + Secure cookies, PBKDF2-HMAC-SHA256 (200k iterations)

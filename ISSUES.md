@@ -50,6 +50,11 @@ The `/api/v1/auth/me` endpoint returns the user's role (`admin` or `guest`) to a
 - Event type validation returns HTTP 422 with upgrade hint on mismatch
 - When adding new fields: add to `SCHEMA` dict + bump `SCHEMA_VERSION`
 
+## Deployment Features
+
+- **`--host` CLI option** (2026-05-19): Server hostname configurable via `--host` flag or `TEAMAKER_HOST` env var (default: `127.0.0.1`)
+- **`VITE_API_BASE_URL`** (2026-05-19): Client API/image URLs configurable via Vite env var for behind-proxy deployments (e.g. nginx)
+
 ## Dependencies
 
 - Vite 8.0.13 (latest)

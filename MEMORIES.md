@@ -78,6 +78,8 @@ test_tea/
 
 ## Client (tea-client/)
 Vue 3 + Vite + Pinia + Vue Router + Axios
+- API base URL: `VITE_API_BASE_URL` env var (resolved at build time), defaults to empty string (same-origin)
+- Image URLs use `imageUrl()` helper from `utils/url.js` which applies the same base URL
 
 ### Pages
 1. **Login** - Admin password only (no guest login)
@@ -105,7 +107,7 @@ Vue 3 + Vite + Pinia + Vue Router + Axios
 ### Server
 ```bash
 cd tea-server
-python server.py
+python server.py [--host 127.0.0.1] [--port 5000]
 ```
 
 ### Client
@@ -114,6 +116,9 @@ cd tea-client
 npm install
 npm run dev
 ```
+
+### Behind a reverse proxy
+Set `VITE_API_BASE_URL` in `.env.production` (e.g. `VITE_API_BASE_URL=/tea`) and run `npm run build`.
 
 ### MCP Tool
 After creating the tool, restart MCP server:
@@ -145,7 +150,7 @@ cd ~/diamcp && ./restart.sh
 - Database locking: threading.Lock() for concurrent access safety
 - Atomic writes: os.replace() for database persistence
 - Server logging: configurable via `--log stderr|file` and `--log-file` arguments
-- CLI: `argparse` with env var fallback (TEAMAKER_PORT, TEAMAKER_CORS_ALLOW_ORIGIN, TEAMAKER_LOG_METHOD, TEAMAKER_LOG_FILE), `--help` supported, CLI overrides env vars
+- CLI: `argparse` with env var fallback (TEAMAKER_HOST, TEAMAKER_PORT, TEAMAKER_CORS_ALLOW_ORIGIN, TEAMAKER_LOG_METHOD, TEAMAKER_LOG_FILE), `--help` supported, CLI overrides env vars
 - Schema versioning: `SCHEMA` dict defines all DB fields with types/defaults, auto-migration adds missing fields on load, `GET /api/v1/server-info` exposes version + full schema + valid event types, event type validation returns 422 with upgrade hint on mismatch
 
 ## Security Fixes Applied (Original Hardening)
