@@ -684,13 +684,9 @@ class TeaHandler(BaseHTTPRequestHandler):
         body = self.get_json_body()
         tea_type = sanitize_input(body.get("tea_type", "unknown"))
         db = read_db()
-        events = db.get("events", [])
-        for event in reversed(events):
-            if event.get("type") == "brewing_started":
-                self.send_error_json("Brewing already in progress. Complete or cancel it first.", 409)
-                return
-            if event.get("type") in ("brewing_completed", "brewing_cancelled"):
-                break
+        if self._has_active_brewing(db):
+            self.send_error_json("Brewing already in progress. Complete or cancel it first.", 409)
+            return
         update_db(lambda db: db["events"].append({
             "id": secrets.token_hex(8),
             "type": "brewing_started",
@@ -707,17 +703,12 @@ class TeaHandler(BaseHTTPRequestHandler):
         body = self.get_json_body()
         tea_type = sanitize_input(body.get("tea_type", "unknown"))
         db = read_db()
-        events = db.get("events", [])
-        current_brewing_type = None
-        for event in reversed(events):
-            if event.get("type") == "brewing_started":
-                current_brewing_type = event.get("tea_type")
-                break
-            if event.get("type") in ("brewing_completed", "brewing_cancelled"):
-                self.send_error_json("No active brewing. Start a new one first.", 409)
-                return
-        if current_brewing_type and tea_type != current_brewing_type:
-            self.send_error_json(f"Cannot complete a different tea. Current brewing: {current_brewing_type}", 409)
+        if not self._has_active_brewing(db):
+            self.send_error_json("No active brewing. Start a new one first.", 409)
+            return
+        active = self._get_active_brewing(db)
+        if tea_type != active.get("tea_type"):
+            self.send_error_json(f"Cannot complete a different tea. Current brewing: {active.get('tea_type')}", 409)
             return
         update_db(lambda db: db["events"].append({
             "id": secrets.token_hex(8),
@@ -735,17 +726,12 @@ class TeaHandler(BaseHTTPRequestHandler):
         body = self.get_json_body()
         tea_type = sanitize_input(body.get("tea_type", "unknown"))
         db = read_db()
-        events = db.get("events", [])
-        current_brewing_type = None
-        for event in reversed(events):
-            if event.get("type") == "brewing_started":
-                current_brewing_type = event.get("tea_type")
-                break
-            if event.get("type") in ("brewing_completed", "brewing_cancelled"):
-                self.send_error_json("No active brewing. Start a new one first.", 409)
-                return
-        if current_brewing_type and tea_type != current_brewing_type:
-            self.send_error_json(f"Cannot cancel a different tea. Current brewing: {current_brewing_type}", 409)
+        if not self._has_active_brewing(db):
+            self.send_error_json("No active brewing. Start a new one first.", 409)
+            return
+        active = self._get_active_brewing(db)
+        if tea_type != active.get("tea_type"):
+            self.send_error_json(f"Cannot cancel a different tea. Current brewing: {active.get('tea_type')}", 409)
             return
         update_db(lambda db: db["events"].append({
             "id": secrets.token_hex(8),
@@ -754,6 +740,56 @@ class TeaHandler(BaseHTTPRequestHandler):
             "created_at": datetime.now(timezone.utc).isoformat()
         }))
         self.send_json({"status": "brewing_cancelled"})
+
+    def _has_active_brewing(self, db):
+        """Check if there is an active brewing session."""
+        events = db.get("events", [])
+        latest_started = None
+        for event in reversed(events):
+            if event.get("type") == "brewing_started":
+                latest_started = event
+                break
+            if event.get("type") in ("brewing_completed", "brewing_cancelled"):
+                return False
+        if not latest_started:
+            return False
+        started_idx = events.index(latest_started)
+        for event in events[started_idx + 1:]:
+            if event.get("type") in ("brewing_completed", "brewing_cancelled"):
+                return False
+        return True
+
+    def _get_active_brewing(self, db):
+        """Get the active brewing event if any."""
+        events = db.get("events", [])
+        for event in reversed(events):
+            if event.get("type") == "brewing_started":
+                return event
+        return None
+
+    def _has_active_brewing(self, db):
+        """Check if there is an active brewing session."""
+        events = db.get("events", [])
+        latest_started = None
+        for event in reversed(events):
+            if event.get("type") == "brewing_started":
+                latest_started = event
+                break
+        if not latest_started:
+            return False
+        started_idx = events.index(latest_started)
+        for event in events[started_idx + 1:]:
+            if event.get("type") in ("brewing_completed", "brewing_cancelled"):
+                return False
+        return True
+
+    def _get_active_brewing(self, db):
+        """Get the active brewing event if any."""
+        events = db.get("events", [])
+        for event in reversed(events):
+            if event.get("type") == "brewing_started":
+                return event
+        return None
 
     def handle_get_tea_types(self):
         db = read_db()
