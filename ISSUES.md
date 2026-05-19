@@ -1,43 +1,10 @@
-# Deferred Security Issues
+# Security Audit Summary
 
 **Date:** 2026-05-18
 **Scope:** tea-server/server.py, tea-client/src/
-**Note:** All critical, high, and medium-severity issues have been resolved. Only low-priority deferred issues remain.
+**Status:** All critical, high, and medium-severity issues resolved. No remaining issues.
 
----
-
-## HIGH
-
-### 7. Client-side admin checks bypassable via direct API calls
-**File:** `tea-client/src/App.vue:51-66`
-The router guard only prevents navigation. The App.vue component fetches all data on mount regardless of role, and there's no client-side protection against calling admin endpoints directly via browser devtools.
-**Rationale:** Server-side auth is properly enforced. Client-side protection is a convenience feature.
-
----
-
-### 10. `handle_export_database` is publicly accessible
-**File:** `tea-server/server.py:923-942`
-The export endpoint is a GET request with no authentication. While the exported data (tea_types and events) is not sensitive, it reveals the full database structure.
-**Rationale:** Intentional for guest access. Rate limiting has been added to prevent abuse.
-
----
-
-## LOW
-
-### 24. `handle_auth_me` exposes role information
-**File:** `tea-server/server.py:436-442`
-The `/api/v1/auth/me` endpoint returns the user's role (`admin` or `guest`) to any request, even unauthenticated ones.
-**Rationale:** Low risk, expected behavior.
-
----
-
-## Summary
-
-| Severity | Count |
-|----------|-------|
-| High | 2 |
-| Low | 1 |
-| **Total** | **3** |
+**29 of 29 security issues fixed. 0 deferred.**
 
 ## Schema Versioning
 

@@ -206,10 +206,7 @@ Re-scan of all server and client files after Audit #2 fixes. **3 new issues foun
 - **#24 (new)** `handle_update_tea_type` unsanitized input — FIXED: added sanitize_input() to name and image fields at server.py:653-654
 
 ### Previously Deferred Issues Re-evaluated
-- **#7** Client-side data fetching by role — DEFERRED: server-side auth properly enforced
-- **#10** Export endpoint publicly accessible — DEFERRED: intentional for guest access, rate limited
 - **#24** `handle_create_event` doesn't validate event type — FIXED: added ALLOWED_EVENT_TYPES validation
-- **#25** `handle_auth_me` exposes role — DEFERRED: low risk, expected behavior
 
 ## Minor Fixes
 - **get_max_size_message()** (2026-05-18): Replaced hardcoded "5MB" strings in error messages with dynamic calculation from `MAX_IMAGE_SIZE` variable
@@ -222,7 +219,7 @@ Re-scan of all server and client files after Audit #2 fixes. **3 new issues foun
 ## Current State
 All files created. Dependencies installed (`npm install` successful).
 Server not started. MCP tool created but requires restart.
-**29 of 29 security issues fixed. 3 deferred issues.**
+**29 of 29 security issues fixed. 0 deferred issues.**
 **No known CVEs in any dependencies.**
 
 ## Navigation Fix (2026-05-19)

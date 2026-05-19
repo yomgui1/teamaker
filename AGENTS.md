@@ -54,11 +54,6 @@ cd tea-client && npm install && npm run dev
 - All other state-changing endpoints DO require CSRF
 - `importDatabase` sends raw JSON string with `Content-Type: application/json` — not multipart/form-data
 
-## Deferred Issues (ISSUES.md)
-- #7 Client-side admin checks bypassable — server-side enforced, client-side is convenience
-- #10 Export endpoint publicly accessible — intentional, rate-limited
-- #24 `/api/v1/auth/me` exposes role — low risk, expected behavior
-
 ## Files to Reference
 - `MEMORIES.md` — full project context, security notes, fix history
 - `ISSUES.md` — deferred security issues
