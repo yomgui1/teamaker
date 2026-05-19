@@ -5,6 +5,7 @@
       <p>Manage and monitor tea production</p>
 
       <div v-if="!auth.initialized" class="setup-form">
+        <p class="setup-hint">Admin password not set. Please choose a secure password (minimum 8 characters).</p>
         <div v-if="error" class="alert alert-error">{{ error }}</div>
 
         <div class="form-group">
