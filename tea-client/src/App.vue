@@ -31,6 +31,15 @@
     <main>
       <router-view />
     </main>
+    <footer class="app-footer">
+      <div class="footer-content">
+        <span>Brewed with 🍵 by <strong>RogDesign</strong></span>
+        <span>© {{ currentYear }} RogDesign</span>
+        <a href="https://github.com/yomgui1/teamaker" target="_blank" rel="noopener" class="footer-link">
+          GitHub
+        </a>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -46,6 +55,7 @@ const route = useRoute()
 const router = useRouter()
 
 const currentRoute = computed(() => route.name)
+const currentYear = new Date().getFullYear()
 
 onMounted(async () => {
   await auth.checkAuth()
