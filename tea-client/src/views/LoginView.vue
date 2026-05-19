@@ -37,7 +37,7 @@
       <template v-else>
         <div v-if="error" class="alert alert-error">{{ error }}</div>
 
-        <div v-if="showPasswordForm" class="form-group">
+        <div class="form-group">
           <label for="password">Admin Password</label>
           <input
             id="password"
@@ -49,24 +49,8 @@
         </div>
 
         <div class="login-buttons">
-          <button
-            v-if="!showPasswordForm"
-            class="btn btn-primary"
-            style="width: 100%"
-            @click="showPasswordForm = true"
-          >
-            🔐 Admin Login
-          </button>
-
-          <template v-if="showPasswordForm">
-            <button class="btn btn-primary" style="width: 100%" @click="handleLogin">
-              Login as Admin
-            </button>
-            <div class="login-divider">or</div>
-          </template>
-
-          <button class="btn btn-secondary" style="width: 100%" @click="handleGuestLogin">
-            👁️ Guest View
+          <button class="btn btn-primary" style="width: 100%" @click="handleLogin">
+            Login as Admin
           </button>
         </div>
       </template>
@@ -85,7 +69,6 @@ const route = useRoute()
 const auth = useAuthStore()
 const api = useApiStore()
 
-const showPasswordForm = ref(false)
 const password = ref('')
 const error = ref('')
 
@@ -112,7 +95,6 @@ async function handleSetup() {
   try {
     await api.setupPassword(setupPassword.value)
     auth.initialized = true
-    showPasswordForm.value = true
     setupPassword.value = ''
     setupConfirm.value = ''
   } catch (err) {
@@ -139,21 +121,5 @@ async function handleLogin() {
   }
 }
 
-async function handleGuestLogin() {
-  error.value = ''
-  try {
-    await auth.guestLogin()
-    await Promise.all([
-      api.getStatus(),
-      api.getEvents(),
-      api.getStatistics()
-    ])
-    password.value = ''
-    const redirect = route.query.redirect || '/status'
-    router.push(redirect)
-  } catch (err) {
-    error.value = 'Guest login failed'
-    password.value = ''
-  }
-}
+
 </script>

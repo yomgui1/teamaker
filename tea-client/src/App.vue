@@ -18,7 +18,7 @@
         <router-link v-if="auth.isAdmin" to="/database" class="nav-link" :class="{ active: currentRoute === 'Database' }">
           Database
         </router-link>
-        <button v-if="auth.authenticated" class="nav-link" @click="handleLogout">Logout</button>
+        <button v-if="auth.isAdmin" class="nav-link" @click="handleLogout">Logout</button>
         <button v-else class="nav-link" @click="$router.push('/login')">Login</button>
       </div>
       <div class="nav-controls">
@@ -46,7 +46,6 @@ const route = useRoute()
 const router = useRouter()
 
 const currentRoute = computed(() => route.name)
-const authenticated = computed(() => auth.authenticated)
 
 onMounted(async () => {
   await auth.checkAuth()

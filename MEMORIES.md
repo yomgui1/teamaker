@@ -80,8 +80,8 @@ test_tea/
 Vue 3 + Vite + Pinia + Vue Router + Axios
 
 ### Pages
-1. **Login** - Admin (password) or Guest (no password)
-2. **Status** - Tea brewing controls (admin), status display (guest)
+1. **Login** - Admin password only (no guest login)
+2. **Status** - Tea brewing controls (admin), status display (guest) — default page
 3. **Statistics** - Tea production stats by type and month (all users)
 4. **Tea Types** - Add/edit/remove tea types with images (admin only)
 5. **Events** - Event log with configurable limit, delete events (admin delete)
@@ -217,7 +217,7 @@ Re-scan of all server and client files after Audit #2 fixes. **3 new issues foun
 ## Current State
 All files created. Dependencies installed (`npm install` successful).
 Server not started. MCP tool created but requires restart.
-**28 of 28 security issues fixed. 3 deferred issues.**
+**29 of 29 security issues fixed. 3 deferred issues.**
 **No known CVEs in any dependencies.**
 
 ## Navigation Fix (2026-05-19)
@@ -253,3 +253,10 @@ Server not started. MCP tool created but requires restart.
 ## Router Fix (2026-05-19)
 - `/` now redirects to `/login` instead of showing empty HomeView (unauthenticated users should see login page)
 - Events page is now admin-only: hidden from nav for guests, router guard blocks direct access
+
+## Admin-Only Login & Guest Default (2026-05-19)
+- Login page now only allows admin login — guest login button and `handleGuestLogin()` removed
+- `/` redirects to `/status` instead of `/login` — guest mode is the default
+- Logout button only visible when `auth.isAdmin` is true (hidden in guest mode)
+- `LoginView.vue`: removed `showPasswordForm` toggle, `handleGuestLogin()`, "Guest View" and "Admin Login" buttons — only password input + "Login as Admin" button remain
+- `App.vue`: logout button condition changed from `auth.authenticated` to `auth.isAdmin`, removed unused `authenticated` computed
