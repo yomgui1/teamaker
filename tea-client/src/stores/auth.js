@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', {
      authenticated: false,
      role: 'guest',
      initialized: false,
-     darkMode: false,
+     darkMode: localStorage.getItem('darkMode') === 'true',
      checking: true
    }),
   actions: {
@@ -54,10 +54,11 @@ async logout() {
         this.authenticated = false
         this.role = 'guest'
       },
-    toggleDarkMode() {
-      this.darkMode = !this.darkMode
-      document.body.classList.toggle('dark-mode', this.darkMode)
-    }
+   toggleDarkMode() {
+       this.darkMode = !this.darkMode
+       document.body.classList.toggle('dark-mode', this.darkMode)
+       localStorage.setItem('darkMode', this.darkMode)
+     }
   },
   getters: {
     isAdmin: (state) => state.role === 'admin'

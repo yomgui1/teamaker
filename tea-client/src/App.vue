@@ -58,7 +58,8 @@ const currentRoute = computed(() => route.name)
 const currentYear = new Date().getFullYear()
 
 onMounted(async () => {
-  await auth.checkAuth()
+   document.body.classList.toggle('dark-mode', auth.darkMode)
+   await auth.checkAuth()
   await Promise.all([
     api.getStatus(),
     api.getTeaTypes(),
