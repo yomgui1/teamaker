@@ -114,7 +114,7 @@ const teaRankings = computed(() => {
   return Object.values(map).map(s => ({
     ...s,
     completionRate: s.started > 0 ? Math.round((s.completed / s.started) * 100) : 0
-  })).sort((a, b) => b.completionRate - a.completionRate || b.completed - a.completed)
+  })).sort((a, b) => b.completed - a.completed || b.started - a.started)
 })
 
 function formatMonth(month) {
