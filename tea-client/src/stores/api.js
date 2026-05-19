@@ -136,10 +136,10 @@ export const useApiStore = defineStore('api', {
         throw err
       }
     },
-    async deleteEvent(id) {
+async deleteEvent(id) {
       try {
         const res = await axios.delete(`/api/v1/events?id=${id}`)
-        await this.getEvents()
+        await Promise.all([this.getEvents(), this.getStatus()])
         return res.data
       } catch (err) {
         this.error = err.message
