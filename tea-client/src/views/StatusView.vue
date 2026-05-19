@@ -41,9 +41,9 @@
             {{ isBrewing ? 'Brewing in progress...' : 'No active brewing' }}
           </div>
 
-          <div class="form-group" style="max-width: 300px; margin: 20px auto;">
+          <div v-if="!isBrewing" class="form-group" style="max-width: 300px; margin: 20px auto;">
             <label for="tea-select">Select Tea Type</label>
-            <select id="tea-select" v-model="selectedTeaType" :disabled="isBrewing">
+            <select id="tea-select" v-model="selectedTeaType">
               <option value="" disabled>Choose a tea type</option>
               <option v-for="tt in api.teaTypes" :key="tt.id" :value="tt.name">
                 {{ tt.name }}
