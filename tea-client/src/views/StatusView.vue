@@ -20,13 +20,13 @@
           </div>
         </div>
 
-        <div v-else>
-          <div class="tea-image-default" @click="handleTeaClick" v-if="!selectedTeaImage">
+       <div v-else>
+          <div class="tea-image-default" @click="handleTeaClick" v-if="!selectedTeaImage && !isBrewing">
             🍵
           </div>
 
           <img
-            v-else
+            v-else-if="selectedTeaImage"
             :src="selectedTeaImage"
             alt="Tea"
             class="tea-image"
@@ -43,7 +43,7 @@
 
           <div class="form-group" style="max-width: 300px; margin: 20px auto;">
             <label for="tea-select">Select Tea Type</label>
-            <select id="tea-select" v-model="selectedTeaType">
+            <select id="tea-select" v-model="selectedTeaType" :disabled="isBrewing">
               <option value="" disabled>Choose a tea type</option>
               <option v-for="tt in api.teaTypes" :key="tt.id" :value="tt.name">
                 {{ tt.name }}
