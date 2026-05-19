@@ -69,7 +69,7 @@ Serve the `dist/` folder via nginx, proxying `/api/` and `/image/` to the backen
 |--------|------|------|-------------|
 | GET | `/api/v1/status` | Any | Get latest tea status |
 | POST | `/api/v1/status` | Admin | Update status |
-| POST | `/api/v1/auth/login` | — | Login (admin/guest) |
+| POST | `/api/v1/auth/login` | — | Login (admin only) |
 | POST | `/api/v1/auth/setup-password` | — | Set initial admin password |
 | POST | `/api/v1/auth/change-password` | Admin | Change admin password |
 | DELETE | `/api/v1/auth/logout` | Any | Logout |
@@ -83,6 +83,7 @@ Serve the `dist/` folder via nginx, proxying `/api/` and `/image/` to the backen
 | POST | `/api/v1/events/brewing/start` | Admin | Start brewing |
 | POST | `/api/v1/events/brewing/complete` | Admin | Complete brewing |
 | POST | `/api/v1/events/brewing/cancel` | Admin | Cancel brewing |
+| POST | `/api/v1/events/clear` | Admin | Clear all events |
 | GET | `/api/v1/statistics` | Any | Get statistics |
 | POST | `/api/v1/upload-image` | Admin | Upload image |
 | GET | `/image/{filename}` | Any | Serve image |
@@ -94,7 +95,7 @@ Serve the `dist/` folder via nginx, proxying `/api/` and `/image/` to the backen
 ## Directory Structure
 
 ```
-test_tea/
+teamaker/
 ├── tea-server/
 │   ├── server.py          # Main REST server
 │   ├── database.json       # JSON database (auto-created)
@@ -109,8 +110,16 @@ test_tea/
 │       ├── router/
 │       ├── stores/
 │       └── views/
+│           ├── CoffeeView.vue
+│           ├── DatabaseView.vue
+│           ├── EventsView.vue
+│           ├── LoginView.vue
+│           ├── StatisticsView.vue
+│           ├── StatusView.vue
+│           └── TeaTypesView.vue
 ├── AGENTS.md
-├── ISSUES.md
+├── diaMCP-AGENTS.md
+├── LICENSE
 └── MEMORIES.md
 ```
 
@@ -118,7 +127,7 @@ test_tea/
 
 MIT License
 
-Copyright (c) 2026 Tea Production Manager
+Copyright (c) 2026 RogDesign
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
