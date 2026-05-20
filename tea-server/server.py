@@ -817,30 +817,6 @@ class TeaHandler(BaseHTTPRequestHandler):
                 return event
         return None
 
-    def _has_active_brewing(self, db):
-        """Check if there is an active brewing session."""
-        events = db.get("events", [])
-        latest_started = None
-        for event in reversed(events):
-            if event.get("type") == "brewing_started":
-                latest_started = event
-                break
-        if not latest_started:
-            return False
-        started_idx = events.index(latest_started)
-        for event in events[started_idx + 1:]:
-            if event.get("type") in ("brewing_completed", "brewing_cancelled"):
-                return False
-        return True
-
-    def _get_active_brewing(self, db):
-        """Get the active brewing event if any."""
-        events = db.get("events", [])
-        for event in reversed(events):
-            if event.get("type") == "brewing_started":
-                return event
-        return None
-
     def handle_get_tea_types(self):
         db = read_db()
         types = db.get("tea_types", [])
