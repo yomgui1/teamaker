@@ -190,34 +190,48 @@ Complete scan of all server and client files. **25 issues found**, 2 critical. *
 - **#24** No Cache-Control on auth — FIXED: no-cache headers on login/logout/auth/me
 - **#25** Export no rate limit — FIXED: added rate limiting
 
-### Deferred Issues (6)
-- **#10** Export endpoint publicly accessible (documented as intentional for guest access)
-- **#11** Server logging suppressed (low priority, no audit trail needed for this project)
-- **#15** Wildcard CORS (may be intentional for development, can be restricted in production)
-- **#22** Status endpoint exposes internal event type names (low risk, implementation detail)
-- **#23** Auth/me exposes role to unauthenticated requests (low risk, expected behavior)
+## Security Audit #3 (2026-05-20) — Follow-up Fixes
+**18 issues fixed, 0 deferred.**
 
-## Security Audit #3 (2026-05-18) — Follow-up Scan
-Re-scan of all server and client files after Audit #2 fixes. **3 new issues found**, 0 critical. **3 fixed, 0 deferred.**
+- Import chaining `__setitem__` bug (AttributeError) — FIXED
+- Import replaces entire arrays — FIXED: `_merge_by_id()` helper
+- Sessions not invalidated on password change — FIXED: clear sessions dict
+- X-Forwarded-For not validated — FIXED: `get_client_ip()` only trusts trusted proxies
+- CORS default `*` — FIXED: default to `127.0.0.1`
+- No `X-Frame-Options` header — FIXED: added `DENY` to all responses
+- PBKDF2 DoS — FIXED: 5 password-hashing ops per 300s per IP
+- `import re` inside functions — FIXED: module level
+- Duplicate methods (`_has_active_brewing`) — FIXED: removed duplicates
+- `Secure` cookie flag conditional — FIXED: always `Secure`
+- Import `created_at` not validated — FIXED: ISO datetime parsing validation
 
-### New Issues Found & Fixed (3)
-- **#22 (new)** Logout cookie missing `Secure` flag — FIXED: added `Secure` to logout session cookie at server.py:505
-- **#23 (new)** OPTIONS preflight handler missing `nosniff` — FIXED: added `X-Content-Type-Options: nosniff` to do_OPTIONS() at server.py:285
-- **#24 (new)** `handle_update_tea_type` unsanitized input — FIXED: added sanitize_input() to name and image fields at server.py:653-654
+## Security Audit #4 (2026-05-20) — Import & Export Validation
+**2 issues fixed, 1 invalid, 1 fixed.**
 
-### Previously Deferred Issues Re-evaluated
-- **#24** `handle_create_event` doesn't validate event type — FIXED: added ALLOWED_EVENT_TYPES validation
+- Import does not validate event types vs `ALLOWED_EVENT_TYPES` — FIXED: added validation
+- Import does not validate `tea_type` field — **INVALID**: free text string, already sanitized by `sanitize_input()` (128 chars, HTML stripping)
+- Database export publicly accessible — FIXED: added `require_admin()` check
 
-## Minor Fixes
-- **get_max_size_message()** (2026-05-18): Replaced hardcoded "5MB" strings in error messages with dynamic calculation from `MAX_IMAGE_SIZE` variable
-- **Rate limit cleanup** (2026-05-18): Removed `len(rate_limit_store) % 50` guard, cleanup now runs on every request
-- **Statistics endpoint** (2026-05-18): Renamed `brewing_started`/`brewing_completed`/`brewing_cancelled` to `started`/`completed`/`cancelled` to avoid leaking internal event type names
-- **Event type validation** (2026-05-18): Added `ALLOWED_EVENT_TYPES` set, `handle_create_event` rejects invalid types with HTTP 422
-- **Schema versioning** (2026-05-18): `SCHEMA` dict defines all DB fields with types/defaults, `check_migrate_database()` adds missing fields on load, `GET /api/v1/server-info` exposes version + full schema + valid event types, upgrade hint in 422 error on mismatch
-- **CLI argument parsing** (2026-05-18): Replaced manual loop with `argparse`, added `--help`, env var fallback (TEAMAKER_PORT, TEAMAKER_CORS_ALLOW_ORIGIN, TEAMAKER_LOG_METHOD, TEAMAKER_LOG_FILE), CLI overrides env vars
+### Deferred Issues (4)
+- **#6 (Low)** `guestLogin()` dead code in `auth.js:38-47`
+- **#7 (Low)** `HomeView.vue` unreachable — `/` redirects to `/status`
+- **#8 (Low)** Sessions not invalidated on login — old sessions persist until timeout, accumulation risk
+- **#9 (Low)** Import does not validate ID uniqueness — can create duplicate IDs with existing data
+
+### Strengths (Already in Place)
+- PBKDF2-HMAC-SHA256 200k iterations + random salt
+- `secrets.compare_digest()` for constant-time comparison
+- CSRF double-submit cookie with `X-CSRF-Token` header
+- `threading.Lock()` + atomic writes (`os.replace()`)
+- Path traversal protection via `realpath` validation
+- Magic bytes validation + 5MB limit on image upload
+- Rate limiting sliding window (100 req/60s general, 10/60s login)
+- Router guards async for admin routes
+- `nosniff` on all responses
+- `Cache-Control: no-store` on auth-sensitive responses
 
 ## Current State
-**29 of 29 security issues fixed. 0 deferred issues.**
+**44 of 47 security issues fixed. 3 deferred issues.**
 **No known CVEs in any dependencies.**
 
 ## Navigation Fix (2026-05-19)
