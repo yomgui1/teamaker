@@ -1079,6 +1079,9 @@ class TeaHandler(BaseHTTPRequestHandler):
             if "id" not in event or "type" not in event or "created_at" not in event:
                 self.send_error_json("Invalid event: must have 'id', 'type', and 'created_at' fields")
                 return
+            if event["type"] not in ALLOWED_EVENT_TYPES:
+                self.send_error_json(f"Invalid event type '{event['type']}'. Allowed: {', '.join(sorted(ALLOWED_EVENT_TYPES))}")
+                return
             # Validate created_at is a parseable ISO format datetime
             try:
                 datetime.fromisoformat(event["created_at"].replace('Z', '+00:00'))
