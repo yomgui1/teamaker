@@ -1059,7 +1059,7 @@ class TeaHandler(BaseHTTPRequestHandler):
                 self.send_error_json("Invalid event: must have 'id', 'type', and 'created_at' fields")
                 return
      # Merge into existing database
-        update_db(lambda db: db.__setitem__("tea_types", tea_types).__setitem__("events", events))
+        update_db(lambda db: (db.__setitem__("tea_types", tea_types), db.__setitem__("events", events)))
         self.send_json({"status": "imported", "tea_types_imported": len(tea_types), "events_imported": len(events)})
 
     def handle_server_info(self):
