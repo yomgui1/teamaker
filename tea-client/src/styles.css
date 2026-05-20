@@ -483,6 +483,7 @@ input:focus, select:focus, textarea:focus {
   padding: 16px;
   text-align: center;
   transition: all 0.2s;
+  min-width: 0;
 }
 
 .tea-type-card img {
@@ -501,6 +502,9 @@ input:focus, select:focus, textarea:focus {
 .tea-type-name {
   font-weight: 600;
   margin-bottom: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tea-type-actions {
