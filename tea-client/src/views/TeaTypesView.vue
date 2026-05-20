@@ -19,7 +19,7 @@
       <div v-else class="tea-type-grid">
         <div class="tea-type-card" v-for="tt in api.teaTypes" :key="tt.id">
           <img v-if="tt.image" :src="imageUrl(tt.image)" :alt="tt.name" />
-          <img v-else :src="defaultTeaImage" :alt="tt.name" class="default-tea-image" />
+          <div v-else class="tea-emoji">🍵</div>
           <div class="tea-type-name">{{ tt.name }}</div>
           <div class="tea-type-actions">
             <button class="btn btn-secondary btn-sm" @click="openEditModal(tt)">Edit</button>
@@ -93,7 +93,6 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useApiStore } from '../stores/api'
 import { imageUrl } from '../utils/url'
-import defaultTeaImage from '../assets/default-tea.svg'
 
 const api = useApiStore()
 
