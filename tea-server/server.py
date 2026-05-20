@@ -1079,6 +1079,12 @@ class TeaHandler(BaseHTTPRequestHandler):
             if "id" not in event or "type" not in event or "created_at" not in event:
                 self.send_error_json("Invalid event: must have 'id', 'type', and 'created_at' fields")
                 return
+            # Validate created_at is a parseable ISO format datetime
+            try:
+                datetime.fromisoformat(event["created_at"].replace('Z', '+00:00'))
+            except (ValueError, AttributeError):
+                self.send_error_json(f"Invalid event: 'created_at' is not a valid ISO datetime: {event['created_at']!r}")
+                return
         # Merge into existing database — union by ID, imported entries overwrite existing ones
         update_db(lambda db: (_merge_by_id(db["tea_types"], tea_types, "id"), _merge_by_id(db["events"], events, "id")))
         self.send_json({"status": "imported", "tea_types_imported": len(tea_types), "events_imported": len(events)})
