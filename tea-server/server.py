@@ -1106,6 +1106,8 @@ class TeaHandler(BaseHTTPRequestHandler):
         if not allowed:
             self.send_error_json("Too many export requests. Please try again later.", 429, retry_after=retry_after)
             return
+        if not self.require_admin():
+            return
         db = read_db()
         export_data = {
             "tea_types": db.get("tea_types", []),
