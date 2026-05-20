@@ -494,11 +494,6 @@ input:focus, select:focus, textarea:focus {
   margin-bottom: 12px;
 }
 
-.tea-type-card .tea-emoji {
-  font-size: 3rem;
-  margin-bottom: 12px;
-}
-
 .tea-type-name {
   font-weight: 600;
   margin-bottom: 12px;
