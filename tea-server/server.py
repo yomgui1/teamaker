@@ -343,6 +343,7 @@ class TeaHandler(BaseHTTPRequestHandler):
         if cors is not None:
             self.send_header('Access-Control-Allow-Origin', cors)
         self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header('X-Frame-Options', 'DENY')
         if no_cache:
             self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             self.send_header('Pragma', 'no-cache')
@@ -394,6 +395,7 @@ class TeaHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token')
         self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header('X-Frame-Options', 'DENY')
         self.end_headers()
 
     def check_csrf(self):
@@ -989,6 +991,7 @@ class TeaHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', cors)
         self.send_header('Cache-Control', 'public, max-age=86400')
         self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header('X-Frame-Options', 'DENY')
         self.end_headers()
         self.wfile.write(image_data)
 
@@ -1104,6 +1107,7 @@ class TeaHandler(BaseHTTPRequestHandler):
         if cors is not None:
             self.send_header('Access-Control-Allow-Origin', cors)
         self.send_header('Content-Disposition', f'attachment; filename="tea-database-{datetime.now(timezone.utc).strftime("%Y-%m-%d")}.json"')
+        self.send_header('X-Frame-Options', 'DENY')
         self.end_headers()
         self.wfile.write(response_data)
 
