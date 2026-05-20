@@ -1,5 +1,7 @@
+import base64
 import json
 import os
+import re
 import sys
 import hashlib
 import secrets
@@ -330,7 +332,6 @@ def sanitize_input(value, max_length=MAX_INPUT_LENGTH):
         return ""
     value = value.strip()
     # Remove HTML tags to prevent XSS
-    import re
     value = re.sub(r'<[^>]*>', '', value)
     return value[:max_length]
 
@@ -340,7 +341,6 @@ def sanitize_description(value, max_length=MAX_DESCRIPTION_LENGTH):
     if not isinstance(value, str):
         return ""
     value = value.strip()
-    import re
     value = re.sub(r'<[^>]*>', '', value)
     return value[:max_length]
 
@@ -1037,7 +1037,6 @@ class TeaHandler(BaseHTTPRequestHandler):
         if body is None:
             self.send_error_json("Invalid JSON")
             return
-        import base64
         filename = sanitize_input(body.get("filename", ""))
         data_b64 = body.get("data", "")
         if not filename or not data_b64:
