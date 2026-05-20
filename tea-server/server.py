@@ -982,6 +982,7 @@ class TeaHandler(BaseHTTPRequestHandler):
             self.send_error_json("Not found", 404)
             return
         if not os.path.isfile(real_path):
+            warnings.warn(f"Image file not found: {real_path}")
             self.send_error_json("Image not found", 404)
             return
         content_type, _ = mimetypes.guess_type(real_path)

@@ -17,8 +17,8 @@
       </div>
 
       <div v-else class="tea-type-grid">
-        <div class="tea-type-card" v-for="tt in api.teaTypes" :key="tt.id">
-          <img v-if="tt.image" :src="imageUrl(tt.image)" :alt="tt.name" />
+        <div class="tea-type-card" v-for="tt in api.teaTypes" :key="tt.id" :class="{ 'image-broken': brokenImages.has(tt.image) }">
+          <img v-if="tt.image" :src="imageUrl(tt.image)" :alt="tt.name" @error="brokenImages.add(tt.image)" />
           <div v-else class="tea-emoji">🍵</div>
           <div class="tea-type-name">{{ tt.name }}</div>
           <div class="tea-type-actions">
@@ -95,6 +95,8 @@ import { useApiStore } from '../stores/api'
 import { imageUrl } from '../utils/url'
 
 const api = useApiStore()
+
+const brokenImages = new Set()
 
 const showModal = ref(false)
 const showDeleteModal = ref(false)

@@ -494,6 +494,16 @@ input:focus, select:focus, textarea:focus {
   margin-bottom: 12px;
 }
 
+.tea-type-card.image-broken {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 1px #c0392b;
+}
+
+.tea-type-card.image-broken img {
+  filter: grayscale(100%);
+  opacity: 0.4;
+}
+
 .tea-type-card .tea-emoji {
   width: 100px;
   height: 100px;
