@@ -88,6 +88,8 @@ RATE_LIMIT_WINDOW = 60  # seconds
 RATE_LIMIT_MAX_REQUESTS = 100  # max requests per window for general endpoints
 LOGIN_RATE_LIMIT_MAX = 10  # max login attempts per window
 LOGIN_COOLDOWN = 300  # seconds to wait after max attempts
+PASSWORD_HASH_WINDOW = 300  # seconds — window for password hashing operations
+PASSWORD_HASH_MAX = 5  # max password-hashing operations per window (includes login, setup, change)
 
 # Rate limiter storage: {ip: [(timestamp, endpoint), ...]}
 rate_limit_lock = threading.Lock()
@@ -143,6 +145,19 @@ def check_rate_limit(ip, endpoint, max_requests=None):
 
         # Record this request
         rate_limit_store[ip].append((now, endpoint))
+        return True, 0
+
+
+def check_password_hash_limit(ip):
+    """Check global password hashing rate limit (covers login, setup, change)."""
+    now = time.time()
+    with rate_limit_lock:
+        # Filter to password hash window
+        password_ops = [(ts, ep) for ts, ep in rate_limit_store.get(ip, []) if ts > now - PASSWORD_HASH_WINDOW]
+        if len(password_ops) >= PASSWORD_HASH_MAX:
+            oldest = min(ts for ts, _ in password_ops)
+            retry_after = int(PASSWORD_HASH_WINDOW - (now - oldest)) + 1
+            return False, max(retry_after, 1)
         return True, 0
 
 
@@ -579,6 +594,12 @@ class TeaHandler(BaseHTTPRequestHandler):
             self.send_error_json("Too many login attempts. Please try again later.", 429, retry_after=retry_after)
             return
 
+        # Check password hashing limit (prevents CPU exhaustion via PBKDF2)
+        pw_allowed, pw_retry = check_password_hash_limit(client_ip)
+        if not pw_allowed:
+            self.send_error_json("Too many password attempts. Please try again later.", 429, retry_after=pw_retry)
+            return
+
         body = self.get_json_body()
         if body is None:
             self.send_error_json("Invalid JSON")
@@ -642,6 +663,12 @@ class TeaHandler(BaseHTTPRequestHandler):
         if not allowed:
             self.send_error_json("Too many requests. Please try again later.", 429, retry_after=retry_after)
             return
+
+        # Check password hashing limit (prevents CPU exhaustion via PBKDF2)
+        pw_allowed, pw_retry = check_password_hash_limit(client_ip)
+        if not pw_allowed:
+            self.send_error_json("Too many password attempts. Please try again later.", 429, retry_after=pw_retry)
+            return
         db = read_db()
         if db.get("admin_password_hash") is not None:
             if not self.check_csrf():
@@ -668,6 +695,12 @@ class TeaHandler(BaseHTTPRequestHandler):
         allowed, retry_after = check_rate_limit(client_ip, '/api/v1/auth/change-password')
         if not allowed:
             self.send_error_json("Too many requests. Please try again later.", 429, retry_after=retry_after)
+            return
+
+        # Check password hashing limit (prevents CPU exhaustion via PBKDF2)
+        pw_allowed, pw_retry = check_password_hash_limit(client_ip)
+        if not pw_allowed:
+            self.send_error_json("Too many password attempts. Please try again later.", 429, retry_after=pw_retry)
             return
         if not self.check_csrf():
             return
