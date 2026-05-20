@@ -682,6 +682,7 @@ class TeaHandler(BaseHTTPRequestHandler):
             self.send_error_json("Invalid current password", 401)
             return
         set_admin_password(new_password)
+        update_db(lambda db: db.__setitem__("sessions", {}))
         self.send_json({"status": "password changed"})
 
     def handle_brewing_start(self):
