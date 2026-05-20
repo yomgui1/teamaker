@@ -18,7 +18,8 @@
 
       <div v-else class="tea-type-grid">
         <div class="tea-type-card" v-for="tt in api.teaTypes" :key="tt.id">
-          <img :src="tt.image ? imageUrl(tt.image) : DEFAULT_TEA_IMAGE" :alt="tt.name" />
+          <img v-if="tt.image" :src="imageUrl(tt.image)" :alt="tt.name" />
+          <img v-else :src="defaultTeaImage" :alt="tt.name" class="default-tea-image" />
           <div class="tea-type-name">{{ tt.name }}</div>
           <div class="tea-type-actions">
             <button class="btn btn-secondary btn-sm" @click="openEditModal(tt)">Edit</button>
@@ -92,10 +93,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useApiStore } from '../stores/api'
 import { imageUrl } from '../utils/url'
+import defaultTeaImage from '../assets/default-tea.svg'
 
 const api = useApiStore()
-
-const DEFAULT_TEA_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGM3MDU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTYgMTh2LjVhNCA0IDAgMCAwIDggMHYtLjUiLz48cGF0aCBkPSJNNSA4aDE0Ii8+PHBhdGggZD0iTTE5IDhoLTE0YTQgNCAwIDAgMCAwIDhoMTR6Ii8+PC9zdmc+'
 
 const showModal = ref(false)
 const showDeleteModal = ref(false)
