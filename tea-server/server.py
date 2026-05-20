@@ -7,6 +7,7 @@ import hashlib
 import secrets
 import threading
 import time
+import warnings
 from datetime import datetime, timezone
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
@@ -1088,6 +1089,20 @@ class TeaHandler(BaseHTTPRequestHandler):
             except (ValueError, AttributeError):
                 self.send_error_json(f"Invalid event: 'created_at' is not a valid ISO datetime: {event['created_at']!r}")
                 return
+        # Detect ID collisions before merge
+        existing_tt_ids = {tt["id"] for tt in db.get("tea_types", [])}
+        existing_event_ids = {e["id"] for e in db.get("events", [])}
+        imported_tt_ids = {tt["id"] for tt in tea_types}
+        imported_event_ids = {e["id"] for e in events}
+        tt_collisions = imported_tt_ids & existing_tt_ids
+        event_collisions = imported_event_ids & existing_event_ids
+        if tt_collisions or event_collisions:
+            parts = []
+            if tt_collisions:
+                parts.append(f"{len(tt_collisions)} tea_type(s) with duplicate ID(s)")
+            if event_collisions:
+                parts.append(f"{len(event_collisions)} event(s) with duplicate ID(s)")
+            warnings.warn(f"Import overwrites existing entries: {', '.join(parts)}. Imported entries will replace existing ones.")
         # Merge into existing database — union by ID, imported entries overwrite existing ones
         update_db(lambda db: (_merge_by_id(db["tea_types"], tea_types, "id"), _merge_by_id(db["events"], events, "id")))
         self.send_json({"status": "imported", "tea_types_imported": len(tea_types), "events_imported": len(events)})
