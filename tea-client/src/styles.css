@@ -495,13 +495,21 @@ input:focus, select:focus, textarea:focus {
 }
 
 .tea-type-card.image-broken {
-  border-color: #c0392b;
-  box-shadow: 0 0 0 1px #c0392b;
+  border: 2px solid #c0392b;
+  background: #fff5f5;
 }
 
 .tea-type-card.image-broken img {
   filter: grayscale(100%);
-  opacity: 0.4;
+  opacity: 0.2;
+}
+
+.tea-type-card.image-broken .tea-type-name::after {
+  content: " ⚠️ Missing image file";
+  font-size: 0.75rem;
+  color: #c0392b;
+  font-weight: normal;
+  display: block;
 }
 
 .tea-type-card .tea-emoji {
