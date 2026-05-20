@@ -231,8 +231,15 @@ Complete scan of all server and client files. **25 issues found**, 2 critical. *
 - `nosniff` on all responses
 - `Cache-Control: no-store` on auth-sensitive responses
 
+## Bug Fixes (2026-05-20)
+- Import fails with `NameError: name 'db' is not defined` — FIXED: added `read_db()` call before ID collision detection
+- `import re` inside functions — FIXED: module level (same as audit #4)
+- Tea type name text overflow in grid cards — FIXED: `min-width: 0` + `text-overflow: ellipsis`
+- Missing image files show broken icon — FIXED: client-side `@error` tracking + emoji fallback on all views
+- Broken image indicator not visible in dark mode — FIXED: dark mode CSS rules for `.tea-type-card.image-broken`
+
 ## Current State
-**47 of 49 security issues resolved. 2 invalid. 0 deferred.**
+**47 of 49 issues resolved. 2 invalid. 0 deferred. All known bugs fixed.**
 **No known CVEs in any dependencies.**
 
 ## Navigation Fix (2026-05-19)
