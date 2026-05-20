@@ -1072,7 +1072,7 @@ class TeaHandler(BaseHTTPRequestHandler):
             if "id" not in tt or "name" not in tt:
                 self.send_error_json("Invalid tea_type: must have 'id' and 'name' fields")
                 return
-       # Validate event entries
+        # Validate event entries
         for event in events:
             if not isinstance(event, dict):
                 self.send_error_json("Invalid database format: each event must be an object")
@@ -1089,6 +1089,7 @@ class TeaHandler(BaseHTTPRequestHandler):
             except (ValueError, AttributeError):
                 self.send_error_json(f"Invalid event: 'created_at' is not a valid ISO datetime: {event['created_at']!r}")
                 return
+        db = read_db()
         # Detect ID collisions before merge
         existing_tt_ids = {tt["id"] for tt in db.get("tea_types", [])}
         existing_event_ids = {e["id"] for e in db.get("events", [])}
