@@ -212,11 +212,12 @@ Complete scan of all server and client files. **25 issues found**, 2 critical. *
 - Import does not validate `tea_type` field — **INVALID**: free text string, already sanitized by `sanitize_input()` (128 chars, HTML stripping)
 - Database export publicly accessible — FIXED: added `require_admin()` check
 
-### Deferred Issues (4)
-- **#6 (Low)** `guestLogin()` dead code in `auth.js:38-47`
-- **#7 (Low)** `HomeView.vue` unreachable — `/` redirects to `/status`
-- **#8 (Low)** Sessions not invalidated on login — old sessions persist until timeout, accumulation risk
-- **#9 (Low)** Import does not validate ID uniqueness — can create duplicate IDs with existing data
+### Invalidated Issues
+- **#4 (High)** ~~Import does not validate `tea_type` field in events~~ — **INVALID**: `tea_type` is free text string, already sanitized by `sanitize_input()` (128 chars, HTML stripping). No enum or external reference exists.
+- **#6 (Low)** `guestLogin()` — **FIXED**: removed dead code from auth store
+- **#7 (Low)** `HomeView.vue` — **FIXED**: deleted unused file
+- **#8 (Low)** Sessions not invalidated on login — **INVALID**: sessions kept intentionally to allow login on multiple devices. Expired sessions auto-cleaned by `is_session_valid()` (1h timeout).
+- **#9 (Low)** Import does not validate ID uniqueness — **FIXED**: added warning.log on collisions
 
 ### Strengths (Already in Place)
 - PBKDF2-HMAC-SHA256 200k iterations + random salt
@@ -231,7 +232,7 @@ Complete scan of all server and client files. **25 issues found**, 2 critical. *
 - `Cache-Control: no-store` on auth-sensitive responses
 
 ## Current State
-**44 of 47 security issues fixed. 3 deferred issues.**
+**47 of 49 security issues resolved. 2 invalid. 0 deferred.**
 **No known CVEs in any dependencies.**
 
 ## Navigation Fix (2026-05-19)
@@ -307,5 +308,5 @@ Complete scan of all server and client files. **25 issues found**, 2 critical. *
 - Prevents blank 404 pages for typos or direct URL entry
 
 ## Dead Code
-- `auth.js` `guestLogin()` — removed from client (no guest login button), but method still exists in store. Should be removed.
-- `HomeView.vue` — still exists but `/` redirects to `/status` in router. Not reachable.
+- ~~`auth.js` `guestLogin()`~~ — removed
+- ~~`HomeView.vue`~~ — deleted

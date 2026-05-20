@@ -58,6 +58,7 @@ cd tea-client && npm install && npm run dev
 ## Git Rules
 - **NEVER push without explicit user permission.** SSH key expires and requires manual re-authorization on GitHub.
 - Always ask before running `git push`.
+- **NEVER commit `MEMORIES.md` without explicit user permission.** Edits to this file are allowed, but commits must wait for user command.
 
 ## Files to Reference
 - `MEMORIES.md` — full project context, security notes, fix history
