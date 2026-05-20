@@ -11,6 +11,7 @@
 
        <div v-if="!auth.isAdmin" class="status-display">
           <img v-if="activeTeaImage" :src="activeTeaImage" alt="Tea" class="tea-image" style="max-width: 200px; margin: 0 auto 16px; display: block;" />
+          <img v-else :src="DEFAULT_TEA_IMAGE" alt="Tea" class="tea-image" style="max-width: 200px; margin: 0 auto 16px; display: block;" />
           <div class="status-icon">{{ statusIcon }}</div>
           <div class="status-text">{{ statusText }}</div>
           <div class="status-detail" v-if="api.status?.type && api.status.type !== 'unknown'">
@@ -21,10 +22,15 @@
           </div>
         </div>
 
-        <div v-else>
-          <div class="tea-image-default" @click="handleTeaClick" v-if="!selectedTeaImage && !isBrewing">
-            🍵
-          </div>
+       <div v-else>
+          <img
+            v-if="!selectedTeaImage && !isBrewing"
+            :src="DEFAULT_TEA_IMAGE"
+            alt="Tea"
+            class="tea-image"
+            @click="handleTeaClick"
+            style="max-width: 200px; margin: 0 auto 16px; display: block; cursor: pointer; opacity: 0.6;"
+          />
 
           <img
             v-else-if="selectedTeaImage"
@@ -99,6 +105,8 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useApiStore } from '../stores/api'
 import { imageUrl } from '../utils/url'
+
+const DEFAULT_TEA_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGM3MDU1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTYgMTh2LjVhNCA0IDAgMCAwIDggMHYtLjUiLz48cGF0aCBkPSJNNSA4aDE0Ii8+PHBhdGggZD0iTTE5IDhoLTE0YTQgNCAwIDAgMCAwIDhoMTR6Ii8+PC9zdmc+'
 
 const auth = useAuthStore()
 const api = useApiStore()
