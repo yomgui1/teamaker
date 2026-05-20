@@ -51,6 +51,19 @@ def log_request(handler, message):
         sys.stderr.flush()
 
 
+def _is_trusted_proxy(ip):
+    """Check if IP is from a trusted proxy (loopback or private network)."""
+    return ip in ('127.0.0.1', '::1', 'localhost') or ip.startswith('10.') or ip.startswith('192.168.') or ip.startswith('172.16.') or ip.startswith('172.17.') or ip.startswith('172.18.') or ip.startswith('172.19.') or ip.startswith('172.2') or ip.startswith('172.3')
+
+
+def get_client_ip(handler):
+    """Get client IP, trusting X-Forwarded-For only from trusted proxies."""
+    forwarded = handler.headers.get('X-Forwarded-For')
+    if forwarded and _is_trusted_proxy(handler.client_address[0] if handler.client_address else ''):
+        return forwarded.split(',')[0].strip()
+    return handler.client_address[0] if handler.client_address else '127.0.0.1'
+
+
 def get_cors_header(handler):
     """Return the Access-Control-Allow-Origin value for this request.
     
@@ -556,12 +569,7 @@ class TeaHandler(BaseHTTPRequestHandler):
             self.send_json({"authenticated": False, "role": "guest", "initialized": initialized}, no_cache=True)
 
     def handle_login(self):
-        # Get client IP (respect X-Forwarded-For for reverse proxy)
-        forwarded = self.headers.get('X-Forwarded-For')
-        if forwarded:
-            client_ip = forwarded.split(',')[0].strip()
-        else:
-            client_ip = self.client_address[0] if self.client_address else '127.0.0.1'
+        client_ip = get_client_ip(self)
 
         # Check rate limit
         allowed, retry_after = check_rate_limit(client_ip, '/api/v1/auth/login')
@@ -627,8 +635,7 @@ class TeaHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps({"status": "logged out"}).encode())
 
     def handle_setup_password(self):
-        forwarded = self.headers.get('X-Forwarded-For')
-        client_ip = forwarded.split(',')[0].strip() if forwarded else (self.client_address[0] if self.client_address else '127.0.0.1')
+        client_ip = get_client_ip(self)
         allowed, retry_after = check_rate_limit(client_ip, '/api/v1/auth/setup-password')
         if not allowed:
             self.send_error_json("Too many requests. Please try again later.", 429, retry_after=retry_after)
@@ -655,8 +662,7 @@ class TeaHandler(BaseHTTPRequestHandler):
         self.send_json({"status": "password set"})
 
     def handle_change_password(self):
-        forwarded = self.headers.get('X-Forwarded-For')
-        client_ip = forwarded.split(',')[0].strip() if forwarded else (self.client_address[0] if self.client_address else '127.0.0.1')
+        client_ip = get_client_ip(self)
         allowed, retry_after = check_rate_limit(client_ip, '/api/v1/auth/change-password')
         if not allowed:
             self.send_error_json("Too many requests. Please try again later.", 429, retry_after=retry_after)
@@ -1080,8 +1086,7 @@ class TeaHandler(BaseHTTPRequestHandler):
         })
 
     def handle_export_database(self):
-        forwarded = self.headers.get('X-Forwarded-For')
-        client_ip = forwarded.split(',')[0].strip() if forwarded else (self.client_address[0] if self.client_address else '127.0.0.1')
+        client_ip = get_client_ip(self)
         allowed, retry_after = check_rate_limit(client_ip, '/api/v1/database/export')
         if not allowed:
             self.send_error_json("Too many export requests. Please try again later.", 429, retry_after=retry_after)
