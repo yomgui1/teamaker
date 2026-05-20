@@ -17,9 +17,9 @@
       </div>
 
       <div v-else class="tea-type-grid">
-        <div class="tea-type-card" v-for="tt in api.teaTypes" :key="tt.id" :class="{ 'image-broken': brokenImages.has(tt.image) }">
-          <img v-if="tt.image" :src="imageUrl(tt.image)" :alt="tt.name" @error="brokenImages.add(tt.image)" />
-          <div v-else class="tea-emoji">🍵</div>
+        <div class="tea-type-card" v-for="tt in api.teaTypes" :key="tt.id" :class="{ 'image-broken': brokenImages[tt.image] }">
+          <img v-if="tt.image && !brokenImages[tt.image]" :src="imageUrl(tt.image)" :alt="tt.name" @error="brokenImages[tt.image] = true" />
+          <div v-else :class="['tea-emoji', { 'missing-image': brokenImages[tt.image] }]">🍵</div>
           <div class="tea-type-name">{{ tt.name }}</div>
           <div class="tea-type-actions">
             <button class="btn btn-secondary btn-sm" @click="openEditModal(tt)">Edit</button>
@@ -96,7 +96,7 @@ import { imageUrl } from '../utils/url'
 
 const api = useApiStore()
 
-const brokenImages = new Set()
+const brokenImages = reactive({})
 
 const showModal = ref(false)
 const showDeleteModal = ref(false)

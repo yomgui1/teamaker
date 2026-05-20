@@ -524,6 +524,12 @@ input:focus, select:focus, textarea:focus {
   margin-bottom: 12px;
 }
 
+.tea-type-card .tea-emoji.missing-image {
+  background: #fff5f5;
+  border: 2px solid #c0392b;
+  opacity: 0.6;
+}
+
 .tea-type-name {
   font-weight: 600;
   margin-bottom: 12px;
