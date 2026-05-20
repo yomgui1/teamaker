@@ -32,7 +32,7 @@ SCHEMA = {
     "events": {"type": _SCHEMA_TYPE_MAP[list], "default": []},
     "sessions": {"type": _SCHEMA_TYPE_MAP[dict], "default": {}},
 }
-CORS_ALLOW_ORIGIN = os.environ.get('TEAMAKER_CORS_ALLOW_ORIGIN', '*')
+CORS_ALLOW_ORIGIN = os.environ.get('TEAMAKER_CORS_ALLOW_ORIGIN', '127.0.0.1')
 CORS_ALLOW_ORIGINS = [o.strip() for o in CORS_ALLOW_ORIGIN.split(',') if o.strip()]
 LOG_METHOD = 'stderr'
 LOG_FILE = None
@@ -1143,7 +1143,7 @@ if __name__ == '__main__':
 env vars (overridden by CLI args):
   TEAMAKER_PORT              Server port (default: 5000)
   TEAMAKER_HOST              Server hostname (default: 127.0.0.1)
-  TEAMAKER_CORS_ALLOW_ORIGIN Comma-separated origins or '*' (default: *)
+  TEAMAKER_CORS_ALLOW_ORIGIN Comma-separated origins or '127.0.0.1' (default: 127.0.0.1)
   TEAMAKER_LOG_METHOD        'stderr' or 'file' (default: stderr)
   TEAMAKER_LOG_FILE          Log file path (required if LOG_METHOD=file)
 """
@@ -1152,8 +1152,8 @@ env vars (overridden by CLI args):
                         help='Server hostname (default: env TEAMAKER_HOST or 127.0.0.1)')
     parser.add_argument('--port', type=int, default=int(os.environ.get('TEAMAKER_PORT', '5000')),
                         help='Server port (default: env TEAMAKER_PORT or 5000)')
-    parser.add_argument('--cors', type=str, default=os.environ.get('TEAMAKER_CORS_ALLOW_ORIGIN', '*'),
-                        help="CORS origins, comma-separated or '*' (default: env TEAMAKER_CORS_ALLOW_ORIGIN or *)")
+    parser.add_argument('--cors', type=str, default=os.environ.get('TEAMAKER_CORS_ALLOW_ORIGIN', '127.0.0.1'),
+                        help="CORS origins, comma-separated or '127.0.0.1' (default: env TEAMAKER_CORS_ALLOW_ORIGIN or 127.0.0.1)")
     parser.add_argument('--log', dest='log_method', type=str,
                         default=os.environ.get('TEAMAKER_LOG_METHOD', 'stderr'),
                         choices=['stderr', 'file'],
