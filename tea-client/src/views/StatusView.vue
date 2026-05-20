@@ -10,7 +10,7 @@
         <h2>Tea Production Status</h2>
 
        <div v-if="!auth.isAdmin" class="status-display">
-          <img v-if="activeTeaImage" :src="activeTeaImage" alt="Tea" class="tea-image" style="max-width: 200px; margin: 0 auto 16px; display: block;" />
+          <img v-if="activeTeaImage && !brokenImages[activeTeaImage]" :src="activeTeaImage" alt="Tea" class="tea-image" style="max-width: 200px; margin: 0 auto 16px; display: block;" @error="brokenImages[activeTeaImage] = true" />
           <div v-else class="tea-image-default">🍵</div>
           <div class="status-icon">{{ statusIcon }}</div>
           <div class="status-text">{{ statusText }}</div>
@@ -31,11 +31,13 @@
           >🍵</div>
 
           <img
-            v-else-if="selectedTeaImage"
+            v-else-if="selectedTeaImage && !brokenImages[selectedTeaImage]"
             :src="selectedTeaImage"
             alt="Tea"
             class="tea-image"
+            @error="brokenImages[selectedTeaImage] = true"
           />
+          <div v-else-if="selectedTeaImage" class="tea-image-default">🍵</div>
 
           <h3 v-if="selectedTeaType">
             {{ selectedTeaType }}
@@ -99,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, reactive } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useApiStore } from '../stores/api'
 import { imageUrl } from '../utils/url'
@@ -111,6 +113,7 @@ const selectedTeaType = ref('')
 const selectedTeaImage = ref('')
 const message = ref('')
 const messageType = ref('alert-success')
+const brokenImages = reactive({})
 
 const isBrewing = computed(() => {
   if (!api.status) return false
