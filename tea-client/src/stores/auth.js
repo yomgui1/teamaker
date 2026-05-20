@@ -35,18 +35,7 @@ export const useAuthStore = defineStore('auth', {
          throw err
        }
      },
-    async guestLogin() {
-       try {
-         const res = await axios.post('/api/v1/auth/login', { role: 'guest' })
-         this.authenticated = res.data.authenticated
-         this.role = res.data.role
-         this.initialized = res.data.initialized
-         return res.data
-       } catch (err) {
-         throw err
-       }
-     },
-async logout() {
+ async logout() {
         this.initialized = true
         try {
           await axios.delete('/api/v1/auth/logout')
