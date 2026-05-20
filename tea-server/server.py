@@ -266,6 +266,14 @@ def sanitize_filename(filename):
     return f"{safe_name}{ext}"
 
 
+def _merge_by_id(existing, incoming, id_key):
+    """Merge two lists of dicts by ID. Incoming entries overwrite existing ones."""
+    existing_map = {item[id_key]: item for item in existing}
+    for item in incoming:
+        existing_map[item[id_key]] = item
+    return list(existing_map.values())
+
+
 def verify_image_magic_bytes(data):
     """Verify file is a valid image using magic bytes (MIME detection)."""
     if len(data) < 4:
@@ -1050,7 +1058,7 @@ class TeaHandler(BaseHTTPRequestHandler):
             if "id" not in tt or "name" not in tt:
                 self.send_error_json("Invalid tea_type: must have 'id' and 'name' fields")
                 return
-        # Validate event entries
+       # Validate event entries
         for event in events:
             if not isinstance(event, dict):
                 self.send_error_json("Invalid database format: each event must be an object")
@@ -1058,8 +1066,8 @@ class TeaHandler(BaseHTTPRequestHandler):
             if "id" not in event or "type" not in event or "created_at" not in event:
                 self.send_error_json("Invalid event: must have 'id', 'type', and 'created_at' fields")
                 return
-     # Merge into existing database
-        update_db(lambda db: (db.__setitem__("tea_types", tea_types), db.__setitem__("events", events)))
+        # Merge into existing database — union by ID, imported entries overwrite existing ones
+        update_db(lambda db: (_merge_by_id(db["tea_types"], tea_types, "id"), _merge_by_id(db["events"], events, "id")))
         self.send_json({"status": "imported", "tea_types_imported": len(tea_types), "events_imported": len(events)})
 
     def handle_server_info(self):
