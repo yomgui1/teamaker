@@ -372,9 +372,16 @@ class TeaHandler(BaseHTTPRequestHandler):
     def send_error_json(self, message, status=400, retry_after=None, no_cache=False):
         self.send_json({"error": message}, status, retry_after=retry_after, no_cache=no_cache)
 
+    def _is_secure(self):
+        scheme = self.headers.get('X-Forwarded-Proto', '')
+        if scheme:
+            return scheme == 'https'
+        return False
+
     def _cookie_str(self, name, value, extra='', httponly=True):
         http_only = '; HttpOnly' if httponly else ''
-        return f'{name}={value}{http_only}; Secure; SameSite=Lax; Path=/{extra}'
+        secure = '; Secure' if self._is_secure() else ''
+        return f'{name}={value}{http_only}{secure}; SameSite=Lax; Path=/{extra}'
 
     def get_session_id(self):
         cookie = self.headers.get('Cookie', '')
