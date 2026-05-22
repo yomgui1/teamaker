@@ -1,0 +1,23 @@
+[Unit]
+Description=Tea Production Manager Server
+Documentation=https://github.com/yomgui1/teamaker
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 %h/.local/bin/teamaker-server.py
+Restart=on-failure
+RestartSec=5
+
+Environment=TEAMAKER_HOST=127.0.0.1
+Environment=TEAMAKER_PORT=5000
+
+# Logging
+Environment=TEAMAKER_LOG_METHOD=stderr
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tea-server
+
+[Install]
+WantedBy=default.target

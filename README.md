@@ -34,6 +34,27 @@ npm run dev
 
 Open `http://localhost:3000` in your browser.
 
+### Systemd (user service)
+
+Install the server script and the systemd user service:
+
+```bash
+cp tea-server/server.py ~/.local/bin/teamaker-server.py
+cp tea-server/tea-server.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user start tea-server
+systemctl --user enable tea-server   # auto-start on login
+```
+
+Configuration is done via environment variables: `TEAMAKER_HOST`, `TEAMAKER_PORT`, `TEAMAKER_CORS_ALLOW_ORIGIN`, `TEAMAKER_LOG_METHOD`, `TEAMAKER_LOG_FILE`
+
+Check status and logs:
+
+```bash
+systemctl --user status tea-server
+journalctl --user -u tea-server -f
+```
+
 ### Behind a reverse proxy (nginx)
 
 Set `VITE_API_BASE_URL` in a `.env.production` file (e.g. `VITE_API_BASE_URL=/tea`) and build:
@@ -97,9 +118,10 @@ Serve the `dist/` folder via nginx, proxying `/api/` and `/image/` to the backen
 ```
 teamaker/
 ├── tea-server/
-│   ├── server.py          # Main REST server
-│   ├── database.json       # JSON database (auto-created)
-│   └── image/              # Tea image storage
+│   ├── server.py               # Main REST server
+│   ├── tea-server.service      # systemd user service unit
+│   ├── database.json           # JSON database (auto-created)
+│   └── image/                  # Tea image storage
 ├── tea-client/
 │   ├── package.json
 │   ├── vite.config.js
