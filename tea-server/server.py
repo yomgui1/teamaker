@@ -217,7 +217,8 @@ def save_database(db):
         json.dump(db, f, indent=2, default=str)
         f.flush()
         os.fsync(f.fileno())
-    os.replace(tmp_path, DATABASE_PATH)
+    if os.path.exists(tmp_path):
+        os.replace(tmp_path, DATABASE_PATH)
 
 
 def read_db():
